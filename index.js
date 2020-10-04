@@ -9,6 +9,7 @@ const { responseError } = require("./utils/response");
 
 const auth = require("./routes/auth");
 const user = require("./routes/user");
+const friendship = require("./routes/friendship");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -27,6 +28,7 @@ const authMiddleware = (req, res, next) => {
 
 app.use("/auth", auth);
 app.use("/user", authMiddleware, user);
+app.use("/friend", authMiddleware, friendship);
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
