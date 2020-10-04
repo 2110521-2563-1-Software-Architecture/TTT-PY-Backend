@@ -7,7 +7,7 @@ router.use(function timeLog(req, res, next) {
   next();
 });
 // define the home page route
-router.get("/", userController.allUser);
+router.get("/", userController.getAllUser);
 router.get("/search", userController.getUserbyUsername);
 router.post("/add", userController.addFriendbyUsername);
 router.post("/friend", userController.getFriendshipListbyUsername);

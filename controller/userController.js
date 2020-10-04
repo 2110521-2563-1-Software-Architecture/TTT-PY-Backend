@@ -2,10 +2,13 @@ const { response } = require("express");
 const userModel = require("../model/user");
 const { responseError } = require("../util/response");
 const userController = {
-  allUser: (req, res) => {
-    userModel.allUser((err, data) => {
-      res.json(data);
-    });
+  getAllUser: (req, res) => {
+    userModel.getAllUser(
+      ["username", "email", "firstname", "lastname"],
+      (err, data) => {
+        res.json(data);
+      }
+    );
   },
   getUserbyUsername: (req, res) => {
     let username = req.query.username;
