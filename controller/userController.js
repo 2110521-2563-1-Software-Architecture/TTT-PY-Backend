@@ -6,6 +6,12 @@ const userController = {
       res.json(data);
     });
   },
+  searchUserbyUsername: (req, res) => {
+    let username = req.query.username;
+    userModel.searchUserbyID(username, (err, data) => {
+      res.json(data);
+    });
+  },
 };
 
 module.exports = userController;
