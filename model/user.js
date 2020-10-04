@@ -14,6 +14,13 @@ const userModel = {
       callback(null, results);
     });
   },
+  insertUser: (set, callback) => {
+    let sql = "INSERT INTO User SET ?";
+    db.query(sql, set, (err, results) => {
+      if (err) throw callback(err, null);
+      callback(null, results);
+    });
+  },
   getFriendshipbyUsername: (username, friend, callback) => {
     let sql =
       "SELECT * FROM Friendship WHERE Friend_Username = ? and User_Username = ?";

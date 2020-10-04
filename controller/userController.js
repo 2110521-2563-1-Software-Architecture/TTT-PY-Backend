@@ -1,29 +1,35 @@
-const { response } = require("express");
 const userModel = require("../model/user");
-const { responseError } = require("../util/response");
+const { responseError, responseSuccess } = require("../util/response");
 const userController = {
   getAllUser: (req, res) => {
     userModel.getAllUser(
       ["username", "email", "firstname", "lastname"],
-      (err, data) => {
-        res.json(data);
+      (err, results) => {
+        if (err) {
+          console.log(err);
+          return responseError(500, "Internal Error", res);
+        }
+        return responseSuccess(201, results, res);
       }
     );
   },
-  getUserbyUsername: (req, res) => {
+  searchUserbyUsername: (req, res) => {
     let username = req.query.username;
     userModel.getFieldsByUsername(
       ["username", "email", "firstname", "lastname"],
       username,
-      (err, data) => {
-        res.json(data);
+      (err, results) => {
+        if (err) {
+          console.log(err);
+          return responseError(500, "Internal Error", res);
+        }
+        return responseSuccess(201, results, res);
       }
     );
   },
   addFriendbyUsername: (req, res) => {
-    let friend = req.body.friend;
-    // let username = req.user.username;
-    let username = req.body.username;
+    let friend = req.body.username;
+    let username = req.user.username;
     if (username === friend) {
       return responseError(400, "You can't be friend with yourself", res);
     } else {
@@ -57,7 +63,15 @@ const userController = {
                               username,
                               friend,
                               (err, results) => {
-                                res.json(results);
+                                if (err) {
+                                  console.log(err);
+                                  return responseError(
+                                    500,
+                                    "Internal Error",
+                                    res
+                                  );
+                                }
+                                return responseSuccess(201, results, res);
                               }
                             );
                           }
@@ -78,10 +92,13 @@ const userController = {
     }
   },
   getFriendshipListbyUsername: (req, res) => {
-    // let username = req.user.username;
-    let username = req.body.username;
+    let username = req.user.username;
     userModel.getFriendshipListbyUsername(username, (err, results) => {
-      res.json(results);
+      if (err) {
+        console.log(err);
+        return responseError(500, "Internal Error", res);
+      }
+      return responseSuccess(201, results, res);
     });
   },
 };

@@ -8,7 +8,7 @@ router.use(function timeLog(req, res, next) {
 });
 // define the home page route
 router.get("/", userController.getAllUser);
-router.get("/search", userController.getUserbyUsername);
+router.get("/search", userController.searchUserbyUsername);
 router.post("/add", userController.addFriendbyUsername);
 router.post("/friend", userController.getFriendshipListbyUsername);
 module.exports = router;

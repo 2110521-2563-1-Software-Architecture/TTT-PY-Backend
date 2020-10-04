@@ -14,8 +14,9 @@ db.connect((err) => {
   if (err) {
     console.log(err);
     return;
+  } else {
+    console.log("conected to database");
   }
-  console.log("conected as id " + db.threadId);
 });
 
 module.exports = db;
