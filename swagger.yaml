@@ -117,7 +117,7 @@ paths:
       summary: return array of object of specified user
       parameters:
         - name: username
-          in: path
+          in: query
           required: true
           description: username of specified user
           schema:
