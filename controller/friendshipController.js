@@ -1,6 +1,6 @@
 const friendshipModel = require("../model/friendship");
 const userModel = require("../model/user");
-const { responseError, responseSuccess } = require("../util/response");
+const { responseError, responseSuccess } = require("../utils/response");
 const friendshipController = {
   addFriendbyUsername: (req, res) => {
     let friend = req.body.username;

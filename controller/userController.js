@@ -1,5 +1,5 @@
 const userModel = require("../model/user");
-const { responseError, responseSuccess } = require("../util/response");
+const { responseError, responseSuccess } = require("../utils/response");
 const userController = {
   getAllUser: (req, res) => {
     userModel.getAllUser(
@@ -9,7 +9,7 @@ const userController = {
           console.log(err);
           return responseError(500, "Internal Error", res);
         }
-        return responseSuccess(201, results, res);
+        return responseSuccess(200, results, res);
       }
     );
   },
@@ -23,7 +23,7 @@ const userController = {
           console.log(err);
           return responseError(500, "Internal Error", res);
         }
-        return responseSuccess(201, results, res);
+        return responseSuccess(200, results, res);
       }
     );
   },
