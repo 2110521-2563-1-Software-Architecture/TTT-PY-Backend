@@ -7,6 +7,10 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const { responseError } = require("./utils/response");
 
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
+const swaggerDocument = YAML.load("./swagger.yaml");
+
 const auth = require("./routes/auth");
 const user = require("./routes/user");
 const friendship = require("./routes/friendship");
@@ -29,6 +33,8 @@ const authMiddleware = (req, res, next) => {
 app.use("/auth", auth);
 app.use("/user", authMiddleware, user);
 app.use("/friend", authMiddleware, friendship);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);

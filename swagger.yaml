@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: CHATGUNCUP API
+  description: TTT-PY CHATGUNCUP API
+host: localhost:8081
+basePath: /
+components:
+  schemas:
+    Unauthorized:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Unauthorized
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: ts
+        email:
+          type: string
+          example: ts@ts
+        firstname:
+          type: string
+          example: t
+        lastname:
+          type: string
+          example: s
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: authorization
+
+security:
+  - ApiKeyAuth: []
+paths:
+  /user:
+    get:
+      tags:
+        - User
+      security:
+        - ApiKeyAuth: []
+      summary: return array of object of the all user
+      responses:
+        200:
+          description: Array of all user object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+
+tags:
+  - name: User
+  - name: Auth
+  - name: Friend

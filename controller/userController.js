@@ -9,7 +9,7 @@ const userController = {
           console.log(err);
           return responseError(500, "Internal Error", res);
         }
-        return responseSuccess(201, results, res);
+        return responseSuccess(200, results, res);
       }
     );
   },
@@ -23,7 +23,7 @@ const userController = {
           console.log(err);
           return responseError(500, "Internal Error", res);
         }
-        return responseSuccess(201, results, res);
+        return responseSuccess(200, results, res);
       }
     );
   },
