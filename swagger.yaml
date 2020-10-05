@@ -248,7 +248,7 @@ paths:
                     example: success
                   statusCode:
                     type: integer
-                    example: 200
+                    example: 201
                   data:
                     type: object
                     properties:
