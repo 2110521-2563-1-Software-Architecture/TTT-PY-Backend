@@ -15,6 +15,9 @@ const userController = {
   },
   searchUserbyUsername: (req, res) => {
     let username = req.query.username;
+    if (!username) {
+      return responseError(res, 400, "Please input username");
+    }
     userModel.getFieldsByUsername(
       ["username", "email", "firstname", "lastname"],
       username,
@@ -23,7 +26,7 @@ const userController = {
           console.log(err);
           return responseError(res, 500, "Internal Error");
         }
-        return responseSuccess(res, 200, results);
+        return responseSuccess(res, 200, results[0]);
       }
     );
   },
