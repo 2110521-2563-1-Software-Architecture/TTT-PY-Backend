@@ -55,7 +55,7 @@ const authController = {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return responseError(res, 400, "Please provide an username and password");
+      return responseError(res, 400, "Please provide username and password");
     }
 
     getFieldsByUsername("*", username, async (err, results) => {
@@ -86,7 +86,7 @@ const authController = {
       };
 
       res.cookie("jwt", token, cookieOptions);
-      return responseSuccess(res, 200, { token });
+      return responseSuccess(res, 201, { token });
     });
   },
 };

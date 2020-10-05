@@ -94,13 +94,85 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+                    example: null
         401:
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/definitions/Unauthorized"
-
+  /user/search:
+    get:
+      tags:
+        - User
+      security:
+        - ApiKeyAuth: []
+      summary: return object of user whose username is matched
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          description: The username that user want to find
+      responses:
+        200:
+          description: object of user whose username is matched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+                    example: null
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: To send token for user
+      parameters:
+        - in: body
+          name: username
+          schema:
+            type: string
+          description: The user's username
+        - in: body
+          name: password
+          schema:
+            type: string
+          description: The user's password
+      responses:
+        201:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                  message:
+                    type: string
+  /auth/register:
 tags:
   - name: User
   - name: Auth
