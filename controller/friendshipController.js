@@ -6,7 +6,7 @@ const friendshipController = {
     let friend = req.body.username;
     let username = req.user.username;
     if (username === friend) {
-      return responseError(400, "You can't be friend with yourself", res);
+      return responseError(res, 400, "You can't be friend with yourself");
     } else {
       userModel.getFieldsByUsername(["username"], username, (err, results) => {
         if (results.length) {
@@ -21,7 +21,7 @@ const friendshipController = {
                   friend,
                   (err, results) => {
                     if (results.length) {
-                      return responseError(400, "You're already friend", res);
+                      return responseError(res, 400, "You're already friend");
                     } else {
                       friendshipModel.getFriendshipbyUsername(
                         username,
@@ -29,9 +29,9 @@ const friendshipController = {
                         (err, results) => {
                           if (results.length) {
                             return responseError(
+                              res,
                               400,
-                              "You're already friend",
-                              res
+                              "You're already friend"
                             );
                           } else {
                             friendshipModel.addFriendshipbyUsername(
@@ -41,12 +41,12 @@ const friendshipController = {
                                 if (err) {
                                   console.log(err);
                                   return responseError(
+                                    res,
                                     500,
-                                    "Internal Error",
-                                    res
+                                    "Internal Error"
                                   );
                                 }
-                                return responseSuccess(201, results, res);
+                                return responseSuccess(res, 201, results);
                               }
                             );
                           }
@@ -56,12 +56,12 @@ const friendshipController = {
                   }
                 );
               } else {
-                return responseError(400, "Friend username is invalid", res);
+                return responseError(res, 400, "Friend username is invalid");
               }
             }
           );
         } else {
-          return responseError(400, "Your username is invalid", res);
+          return responseError(res, 400, "Your username is invalid");
         }
       });
     }
@@ -71,9 +71,9 @@ const friendshipController = {
     friendshipModel.getFriendshipListbyUsername(username, (err, results) => {
       if (err) {
         console.log(err);
-        return responseError(500, "Internal Error", res);
+        return responseError(res, 500, "Internal Error");
       }
-      return responseSuccess(201, results, res);
+      return responseSuccess(res, 201, results);
     });
   },
 };
