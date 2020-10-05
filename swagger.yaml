@@ -94,12 +94,169 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/User"
+                  message:
+                    type: string
         401:
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /user/search:
+    get:
+      tags:
+        - User
+      security:
+        - ApiKeyAuth: []
+      summary: return array of object of specified user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: username of specified user
+          schema:
+            type: string
+      responses:
+        200:
+          description: A user object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /friend:
+    get:
+      tags:
+        - Friend
+      security:
+        - ApiKeyAuth: []
+      summary: return array of object of the all user's friends
+      responses:
+        200:
+          description: Array of all user's friend object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /friend/add:
+    post:
+      tags:
+        - Friend
+      security:
+        - ApiKeyAuth: []
+      summary: create friendship between users by username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: ts
+      responses:
+        201:
+          description: Friendship is created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 201
+                  data:
+                    type: object
+                  message:
+                    type: string
+                    example: Friendship is created
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
 
 tags:
   - name: User
