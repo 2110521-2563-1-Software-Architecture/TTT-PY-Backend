@@ -21,12 +21,12 @@ const friendshipModel = {
   },
   getFriendshipListbyUsername: (username, callback) => {
     let sql1 =
-      "SELECT Friend_Username as Username FROM Friendship WHERE User_Username = ?";
+      "SELECT username, email, firstname, lastname FROM Friendship JOIN User ON Friendship.User_Username = User.Username WHERE User_Username = ?";
     db.query(sql1, username, (err, results) => {
       if (err) throw callback(err, null);
       var myfriend = results;
       let sql2 =
-        "SELECT User_Username as Username FROM Friendship WHERE Friend_Username = ?";
+        "SELECT username, email, firstname, lastname FROM Friendship JOIN  User ON Friendship.Friend_Username = User.Username WHERE Friend_Username = ? ";
       db.query(sql2, username, (err, results) => {
         if (err) throw callback(err, null);
         myfriend = myfriend.concat(results);

@@ -3,8 +3,11 @@ const userModel = require("../model/user");
 const { responseError, responseSuccess } = require("../utils/response");
 const friendshipController = {
   addFriendbyUsername: (req, res) => {
-    let friend = req.body.username;
+    let friend = res.body.username;
     let username = req.user.username;
+    if (!username || !friend) {
+      return responseError(res, 400, "Please input username");
+    }
     if (username === friend) {
       return responseError(res, 400, "You can't be friend with yourself");
     } else {
@@ -68,6 +71,9 @@ const friendshipController = {
   },
   getFriendshipListbyUsername: (req, res) => {
     let username = req.user.username;
+    if (!username) {
+      return responseError(res, 400, "Please input required username");
+    }
     friendshipModel.getFriendshipListbyUsername(username, (err, results) => {
       if (err) {
         console.log(err);
