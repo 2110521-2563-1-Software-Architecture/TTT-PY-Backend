@@ -7,9 +7,9 @@ const userController = {
       (err, results) => {
         if (err) {
           console.log(err);
-          return responseError(500, "Internal Error", res);
+          return responseError(res, 500, "Internal Error");
         }
-        return responseSuccess(200, results, res);
+        return responseSuccess(res, 200, results);
       }
     );
   },
@@ -21,9 +21,9 @@ const userController = {
       (err, results) => {
         if (err) {
           console.log(err);
-          return responseError(500, "Internal Error", res);
+          return responseError(res, 500, "Internal Error");
         }
-        return responseSuccess(200, results, res);
+        return responseSuccess(res, 200, results);
       }
     );
   },

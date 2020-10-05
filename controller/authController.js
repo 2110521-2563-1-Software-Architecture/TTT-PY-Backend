@@ -9,7 +9,7 @@ const authController = {
   register: (req, res, next) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-      return responseError(400, "Incomplete input", res);
+      return responseError(res, 400, "Incomplete input");
     }
 
     getFieldsByUsername(
@@ -18,11 +18,11 @@ const authController = {
       async (err, results) => {
         if (err) {
           console.log(err);
-          return responseError(500, "Internal Error", res);
+          return responseError(res, 500, "Internal Error");
         }
 
         if (results.length) {
-          return responseError(400, "This username is already in use", res);
+          return responseError(res, 400, "This username is already in use");
         }
 
         let hashedPassword = await bcrypt.hash(password, 8);
@@ -36,13 +36,12 @@ const authController = {
           async (err, results) => {
             if (err) {
               console.log(err);
-              return responseError(500, "Internal Error", res);
+              return responseError(res, 500, "Internal Error");
             }
-            return responseSuccess(
-              201,
-              { username: username, email: email },
-              res
-            );
+            return responseSuccess(res, 201, {
+              username: username,
+              email: email,
+            });
           }
         );
       }
@@ -51,25 +50,25 @@ const authController = {
   login: async (req, res, next) => {
     const { username, password } = req.body;
     if (!username || !password) {
-      return responseError(400, "Incomplete input", res);
+      return responseError(res, 400, "Incomplete input");
     }
 
     if (!username || !password) {
-      return responseError(400, "Please provide an username and password", res);
+      return responseError(res, 400, "Please provide an username and password");
     }
 
     getFieldsByUsername("*", username, async (err, results) => {
       if (err) {
         console.log(err);
-        return responseError(500, "Internal Error", res);
+        return responseError(res, 500, "Internal Error");
       }
 
       if (!results.length) {
-        return responseError(400, "Username or password is incorrect", res);
+        return responseError(res, 400, "Username or password is incorrect");
       }
 
       if (!(await bcrypt.compare(password, results[0].Password))) {
-        return responseError(400, "Username or password is incorrect", res);
+        return responseError(res, 400, "Username or password is incorrect");
       }
 
       const username = results[0].Username;
@@ -86,7 +85,7 @@ const authController = {
       };
 
       res.cookie("jwt", token, cookieOptions);
-      return responseSuccess(200, { token }, res);
+      return responseSuccess(res, 200, { token });
     });
   },
 };

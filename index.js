@@ -26,7 +26,7 @@ const authMiddleware = (req, res, next) => {
     req.user.username = decoded.username;
     next();
   } catch (error) {
-    responseError(401, "Unauthorized", res);
+    responseError(res, 401, "Unauthorized");
   }
 };
 
