@@ -7,18 +7,6 @@ host: localhost:8081
 basePath: /
 components:
   schemas:
-    Unauthorized:
-      type: object
-      properties:
-        status:
-          type: string
-          example: success
-        statusCode:
-          type: integer
-          example: 200
-        message:
-          type: string
-          example: Unauthorized
     User:
       type: object
       properties:
@@ -34,6 +22,43 @@ components:
         lastname:
           type: string
           example: s
+  definitions:
+    BadRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        statusCode:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Incorrect input format
+    Unauthorized:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        statusCode:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: Unauthorized
+    InternalError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        statusCode:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: Internal Error
 
   securitySchemes:
     ApiKeyAuth:
@@ -50,7 +75,7 @@ paths:
         - User
       security:
         - ApiKeyAuth: []
-      summary: return array of object of the all user
+      summary: return array of object of all user
       responses:
         200:
           description: Array of all user object
@@ -74,7 +99,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Unauthorized"
+                $ref: "#/components/definitions/Unauthorized"
 
 tags:
   - name: User
