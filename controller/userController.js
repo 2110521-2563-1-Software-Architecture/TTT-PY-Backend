@@ -1,5 +1,5 @@
 const userModel = require("../model/user");
-const { responseError, responseSuccess } = require("../util/response");
+const { responseError, responseSuccess } = require("../utils/response");
 const userController = {
   getAllUser: (req, res) => {
     userModel.getAllUser(
