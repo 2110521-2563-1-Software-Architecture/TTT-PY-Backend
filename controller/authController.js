@@ -9,7 +9,11 @@ const authController = {
   register: (req, res, next) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-      return responseError(res, 400, "Incomplete input");
+      return responseError(
+        res,
+        400,
+        "Please provide username, email and password"
+      );
     }
 
     getFieldsByUsername(
@@ -49,9 +53,6 @@ const authController = {
   },
   login: async (req, res, next) => {
     const { username, password } = req.body;
-    if (!username || !password) {
-      return responseError(res, 400, "Incomplete input");
-    }
 
     if (!username || !password) {
       return responseError(res, 400, "Please provide an username and password");
