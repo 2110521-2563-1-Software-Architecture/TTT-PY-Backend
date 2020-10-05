@@ -158,6 +158,118 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: For user login. return token to the user for login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  description: The user's username
+                password:
+                  type: string
+                  required: true
+                  description: The user's password
+      responses:
+        201:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                  message:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: For user registration.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  description: The user's username
+                email:
+                  type: string
+                  required: true
+                  description: The user's email
+                password:
+                  type: string
+                  required: true
+                  description: The user's password
+      responses:
+        201:
+          description: Register successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      email:
+                        type: string
+                  message:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
   /friend:
     get:
       tags:

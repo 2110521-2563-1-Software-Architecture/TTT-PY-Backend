@@ -3,7 +3,7 @@ const userModel = require("../model/user");
 const { responseError, responseSuccess } = require("../utils/response");
 const friendshipController = {
   addFriendbyUsername: (req, res) => {
-    let friend = res.body.username;
+    let friend = req.body.username;
     let username = req.user.username;
     if (!username || !friend) {
       return responseError(res, 400, "Please input username");
@@ -49,7 +49,7 @@ const friendshipController = {
                                     "Internal Error"
                                   );
                                 }
-                                return responseSuccess(res, 201, results);
+                                return responseSuccess(res, 201, null);
                               }
                             );
                           }
