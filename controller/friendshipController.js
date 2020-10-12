@@ -84,7 +84,7 @@ const friendshipController = {
         console.log(err);
         return responseError(res, 500, "Internal Error");
       }
-      return responseSuccess(res, 201, results);
+      return responseSuccess(res, 200, results);
     });
   },
 };
