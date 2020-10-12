@@ -49,7 +49,12 @@ const friendshipController = {
                                     "Internal Error"
                                   );
                                 }
-                                return responseSuccess(res, 201, null);
+                                return responseSuccess(
+                                  res,
+                                  201,
+                                  {},
+                                  "Friendship is created"
+                                );
                               }
                             );
                           }
