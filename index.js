@@ -13,7 +13,7 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 
 // const auth = require("./routes/auth");
 const user = require("./routes/user");
-// const friendship = require("./routes/friendship");
+const friendship = require("./routes/friendship");
 const sequelize = require("./config/db");
 const { DataTypes } = require("sequelize");
 
@@ -34,8 +34,9 @@ const authMiddleware = (req, res, next) => {
 };
 
 // app.use("/auth", auth);
-app.use("/user", user);
-// app.use("/friend", authMiddleware, friendship);
+// app.use("/user", authMiddleware, user);
+app.use("/user", authMiddleware, user);
+app.use("/friend", authMiddleware, friendship);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(port, () => {
