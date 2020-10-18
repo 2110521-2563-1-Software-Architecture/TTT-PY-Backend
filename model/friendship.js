@@ -19,6 +19,7 @@ const Friendship = sequelize.define(
     IsBlocked: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
   },
   {
