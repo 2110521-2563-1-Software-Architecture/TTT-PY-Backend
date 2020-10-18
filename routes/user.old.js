@@ -8,5 +8,5 @@ router.use(function timeLog(req, res, next) {
 });
 // define the home page route
 router.get("/", userController.getAllUser);
-// router.get("/search", userController.searchUserbyUsername);
+router.get("/search", userController.searchUserbyUsername);
 module.exports = router;
