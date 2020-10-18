@@ -8,6 +8,6 @@ router.use(function timeLog(req, res, next) {
 });
 // define the home page route
 router.get("/", friendshipController.getFriendshipListbyUsername);
-// router.post("/add", friendshipController.addFriendbyUsername);
+router.post("/add", friendshipController.addFriendbyUsername);
 
 module.exports = router;
