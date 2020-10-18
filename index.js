@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const config = require("./config/config");
 const port = config.appPort;
 const bodyParser = require("body-parser");
@@ -18,6 +19,7 @@ const friendship = require("./routes/friendship");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors());
 
 const authMiddleware = (req, res, next) => {
   try {
