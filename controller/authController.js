@@ -48,7 +48,7 @@ const authController = {
         return responseError(res, 400, "Username or password is incorrect");
       }
       const token = jwt.sign(
-        { username: loggingInUser.Username },
+        { username: loggingInUser.username },
         config.jwtSecret,
         {
           expiresIn: config.jwtExpiresIn,
