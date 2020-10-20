@@ -4,16 +4,16 @@ const sequelize = require("../config/db");
 const ChatRoom = sequelize.define(
   "ChatRoom",
   {
-    ChatRoomID: {
-      type: DataTypes.INT,
+    chatRoomID: {
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    Username1: {
+    username1: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    Username2: {
+    username2: {
       type: DataTypes.STRING,
       allowNull: false,
     },

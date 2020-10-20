@@ -1,5 +1,18 @@
 const User = require("../model/user");
 const { responseError, responseSuccess } = require("../utils/response");
+const userUtil = {
+  userValid: async (username) => {
+    try {
+      const user = await User.findOne({
+        attributes: { exclude: ["password"] },
+        where: { username: username },
+      });
+      return user;
+    } catch (err) {
+      throw err;
+    }
+  },
+};
 const userController = {
   getAllUser: async (req, res) => {
     try {
@@ -8,7 +21,6 @@ const userController = {
       });
       return responseSuccess(res, 200, users);
     } catch (err) {
-      console.log(err);
       return responseError(res, 500, "Internal Error");
     }
   },
@@ -26,9 +38,6 @@ const userController = {
   },
   searchUserbyUsername: async (req, res) => {
     let username = req.query.username;
-    if (!username) {
-      return responseError(res, 400, "Please input username");
-    }
     try {
       const user = await User.findOne({
         attributes: { exclude: ["password"] },
@@ -42,4 +51,4 @@ const userController = {
   },
 };
 
-module.exports = userController;
+module.exports.userController = { ...userController, ...userUtil };

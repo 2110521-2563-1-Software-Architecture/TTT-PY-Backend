@@ -4,24 +4,24 @@ const sequelize = require("../config/db");
 const ChatMessage = sequelize.define(
   "ChatMessage",
   {
-    MessageID: {
-      type: DataTypes.INT,
+    messageID: {
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    UsernameSender: {
+    usernameSender: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    ChatRoomID: {
+    chatRoomID: {
       type: DataTypes.INT,
       allowNull: false,
     },
-    MessageText: {
+    messageText: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    DateTime: {
+    dateTime: {
       type: DataTypes.DATE,
       allowNull: false,
     },
