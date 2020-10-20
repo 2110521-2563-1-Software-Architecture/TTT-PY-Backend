@@ -37,5 +37,24 @@ const chatController = {
       return responseError(res, 500, "Internal Error");
     }
   },
+  createChatRoom: async (req, res) => {
+    let username = req.user.username;
+    let friend = req.body.username;
+    try {
+      if (!(await userController.userValid(friend))) {
+        return responseError(res, 400, "Invalid friend username");
+      }
+      if (!(await friendshipController.checkFriend(username, friend))) {
+        return responseError(res, 400, "You're not friends");
+      }
+      const chatroom = await ChatRoom.create({
+        username1: username,
+        username2: friend,
+      });
+      return responseSuccess(res, 201, chatroom, "Chatroom is created");
+    } catch (err) {
+      return responseError(res, 500, "Internal Error");
+    }
+  },
 };
 module.exports.chatController = chatController;

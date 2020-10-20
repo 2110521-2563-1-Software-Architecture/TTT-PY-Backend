@@ -7,6 +7,6 @@ router.get("/rooms", chatController.getAllChatRooms);
 //getChatRoomByID
 router.get("/room/:id", chatController.getChatRoomByID);
 //createChatRooms
-// router.post("/room", chatController.createChatRoom);
+router.post("/room", chatController.createChatRoom);
 
 module.exports = router;
