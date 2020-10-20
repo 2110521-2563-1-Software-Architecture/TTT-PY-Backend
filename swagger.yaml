@@ -91,9 +91,7 @@ paths:
                     type: integer
                     example: 200
                   data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/User"
+                    $ref: "#/components/schemas/User"
                   message:
                     type: string
         401:
