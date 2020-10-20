@@ -5,7 +5,7 @@ const { chatController } = require("../controller/chatController");
 //getAllChatRooms
 router.get("/rooms", chatController.getAllChatRooms);
 //getChatRoomByID
-// router.get("/room/:id", chatController.getChatRoomByID);
+router.get("/room/:id", chatController.getChatRoomByID);
 //createChatRooms
 // router.post("/room", chatController.createChatRoom);
 
