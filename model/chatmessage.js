@@ -37,11 +37,11 @@ const ChatMessage = sequelize.define(
 
 ChatMessage.belongsTo(ChatRoom, {
   targetKey: "chatRoomID",
-  foreignKey: "chatRoomID_chatroom",
+  foreignKey: "chatRoomID",
 });
 ChatMessage.belongsTo(User, {
   targetKey: "username",
-  foreignKey: "usernameSender_username",
+  foreignKey: "usernameSender",
 });
 
 module.exports = ChatMessage;
