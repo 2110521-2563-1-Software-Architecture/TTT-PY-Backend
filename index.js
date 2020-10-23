@@ -13,6 +13,7 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 
 const auth = require("./routes/auth");
 const user = require("./routes/user");
+const chat = require("./routes/chat");
 const friendship = require("./routes/friendship");
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -34,6 +35,7 @@ const authMiddleware = (req, res, next) => {
 app.use("/auth", auth);
 app.use("/user", authMiddleware, user);
 app.use("/friend", authMiddleware, friendship);
+app.use("/chat", authMiddleware, chat);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
