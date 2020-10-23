@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const User = require("./user");
 
 const ChatRoom = sequelize.define(
   "ChatRoom",
@@ -24,5 +25,8 @@ const ChatRoom = sequelize.define(
     updatedAt: false,
   }
 );
+
+ChatRoom.belongsTo(User, { as: "username1" });
+ChatRoom.belongsTo(User, { as: "username2" });
 
 module.exports = ChatRoom;

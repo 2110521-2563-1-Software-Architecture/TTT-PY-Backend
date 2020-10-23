@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const User = require("./user");
 
 const Friendship = sequelize.define(
   "Friendship",
@@ -28,5 +29,8 @@ const Friendship = sequelize.define(
     updatedAt: false,
   }
 );
+
+Friendship.belongsTo(User, { as: "User_Username" });
+Friendship.belongsTo(User, { as: "Friend_Username" });
 
 module.exports = Friendship;
