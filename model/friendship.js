@@ -30,7 +30,13 @@ const Friendship = sequelize.define(
   }
 );
 
-Friendship.belongsTo(User, { as: "User_Username" });
-Friendship.belongsTo(User, { as: "Friend_Username" });
+Friendship.belongsTo(User, {
+  targetKey: "username",
+  foreignKey: "User_Username_username",
+});
+Friendship.belongsTo(User, {
+  targetKey: "username",
+  foreignKey: "Friend_Username_username",
+});
 
 module.exports = Friendship;
