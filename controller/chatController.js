@@ -47,6 +47,19 @@ const chatController = {
       if (!(await friendshipController.checkFriend(username, friend))) {
         return responseError(res, 400, "You're not friends");
       }
+      const chatroomIsCreated = async () => {
+        return await ChatRoom.findOne({
+          where: {
+            [Op.or]: [
+              { [Op.and]: [{ username1: username }, { username2: friend }] },
+              { [Op.and]: [{ username1: friend }, { username2: username }] },
+            ],
+          },
+        });
+      };
+      if (await chatroomIsCreated()) {
+        return responseError(res, 400, "Chatroom has been already created");
+      }
       const chatroom = await ChatRoom.create({
         username1: username,
         username2: friend,
