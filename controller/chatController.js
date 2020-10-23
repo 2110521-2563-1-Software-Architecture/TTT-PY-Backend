@@ -1,8 +1,22 @@
 const { Op } = require("sequelize");
 const ChatRoom = require("../model/chatroom");
+const ChatMessage = require("../model/chatmessage");
 const { responseError, responseSuccess } = require("../utils/response");
 const { friendshipController } = require("./friendshipController");
 const { userController } = require("./userController");
+
+const chatUtil = {
+  isInRoom: async (username, chatRoomID) => {
+    try {
+      const chatroom = await ChatRoom.findOne({
+        where: { chatRoomID: chatRoomID },
+      });
+      return chatroom.username1 === username || chatroom.username2 === username;
+    } catch (error) {
+      return false;
+    }
+  },
+};
 const chatController = {
   getAllChatRooms: async (req, res) => {
     let username = req.user.username;
@@ -67,6 +81,43 @@ const chatController = {
       return responseSuccess(res, 201, chatroom, "Chatroom is created");
     } catch (err) {
       return responseError(res, 500, "Internal Error");
+    }
+  },
+  getChatMessagesByRoomID: async (username, chatRoomID) => {
+    try {
+      if (!(await chatUtil.isInRoom(username, chatRoomID))) {
+        throw new Error("You do not have permission to access this chatroom");
+      }
+      const messages = await ChatMessage.findAll({
+        where: {
+          chatRoomID: chatRoomID,
+        },
+        attributes: { exclude: ["messageID", "chatRoomID"] },
+      });
+      return messages;
+    } catch (error) {
+      throw error;
+    }
+  },
+  createChatMessage: async (
+    usernameSender,
+    chatRoomID,
+    messageText,
+    dateTime
+  ) => {
+    try {
+      if (!(await chatUtil.isInRoom(usernameSender, chatRoomID))) {
+        throw new Error("You do not have permission to access this chatroom");
+      }
+      const chatMessage = await ChatMessage.create({
+        usernameSender: usernameSender,
+        chatRoomID: chatRoomID,
+        messageText: messageText,
+        dateTime: dateTime,
+      });
+      return chatMessage;
+    } catch (error) {
+      throw error;
     }
   },
 };
