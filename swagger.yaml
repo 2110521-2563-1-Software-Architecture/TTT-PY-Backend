@@ -425,7 +425,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
-  /chat/room/:
+  /chat/room/{id}:
     get:
       tags:
         - Chat
@@ -433,8 +433,8 @@ paths:
         - ApiKeyAuth: []
       summary: return array of object of specified chatroom
       parameters:
-        - name: chatRoomID
-          in: query
+        - name: id
+          in: path
           required: true
           description: chatRoomID of specified chatroom
           schema:
