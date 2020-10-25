@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const User = require("./user");
 
 const ChatRoom = sequelize.define(
   "ChatRoom",
@@ -24,5 +25,14 @@ const ChatRoom = sequelize.define(
     updatedAt: false,
   }
 );
+
+ChatRoom.belongsTo(User, {
+  targetKey: "username",
+  foreignKey: "username1",
+});
+ChatRoom.belongsTo(User, {
+  targetKey: "username",
+  foreignKey: "username2",
+});
 
 module.exports = ChatRoom;

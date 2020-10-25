@@ -1,5 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const User = require("./user");
+const ChatRoom = require("./chatroom");
 
 const ChatMessage = sequelize.define(
   "ChatMessage",
@@ -14,7 +16,7 @@ const ChatMessage = sequelize.define(
       allowNull: false,
     },
     chatRoomID: {
-      type: DataTypes.INT,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     messageText: {
@@ -32,5 +34,14 @@ const ChatMessage = sequelize.define(
     updatedAt: false,
   }
 );
+
+ChatMessage.belongsTo(ChatRoom, {
+  targetKey: "chatRoomID",
+  foreignKey: "chatRoomID",
+});
+ChatMessage.belongsTo(User, {
+  targetKey: "username",
+  foreignKey: "usernameSender",
+});
 
 module.exports = ChatMessage;

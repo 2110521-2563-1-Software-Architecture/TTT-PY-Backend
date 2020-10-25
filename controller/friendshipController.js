@@ -14,7 +14,6 @@ const friendUtil = {
           ],
         },
       });
-      console.log(isFriend);
       return isFriend;
     } catch (err) {
       throw err;
