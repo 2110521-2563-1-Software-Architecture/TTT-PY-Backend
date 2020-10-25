@@ -1,15 +1,17 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const config = require("./config/config");
-const port = config.appPort;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+
+const config = require("./config/config");
+const port = config.appPort;
+
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerDocument = YAML.load("./swagger.yaml");
 
-const authMiddleware = require("./authMiddleware");
+const { authMiddleware } = require("./authUtil");
 
 const auth = require("./routes/auth");
 const user = require("./routes/user");
@@ -30,7 +32,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
-const socketController = require("./socket");
+const { socketController, socketMiddleware } = require("./socket");
 
 io.on("connection", (socket) => {
   socketController(io, socket);
