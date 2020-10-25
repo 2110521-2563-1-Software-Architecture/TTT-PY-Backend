@@ -22,6 +22,18 @@ components:
         lastname:
           type: string
           example: s
+    ChatRoom:
+      type: object
+      properties:
+        chatRoomID:
+          type: integer
+          example: 13
+        username1:
+          type: string
+          example: "ts"
+        username2:
+          type: string
+          example: "a"
   definitions:
     BadRequest:
       type: object
@@ -75,10 +87,10 @@ paths:
         - User
       security:
         - ApiKeyAuth: []
-      summary: return array of object of all user
+      summary: return array of object of the user
       responses:
         200:
-          description: Array of all user object
+          description: Array of the user object
           content:
             application/json:
               schema:
@@ -367,7 +379,156 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
-
+  /chat/rooms:
+    get:
+      tags:
+        - Chat
+      security:
+        - ApiKeyAuth: []
+      summary: return array of object of the all user's chatrooms
+      responses:
+        200:
+          description: Array of all user's chatrooms object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ChatRoom"
+                  message:
+                    type: string
+                    example: ""
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /chat/room/:
+    get:
+      tags:
+        - Chat
+      security:
+        - ApiKeyAuth: []
+      summary: return array of object of specified chatroom
+      parameters:
+        - name: chatRoomID
+          in: query
+          required: true
+          description: chatRoomID of specified chatroom
+          schema:
+            type: integer
+      responses:
+        200:
+          description: A chatroom object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  data:
+                    $ref: "#/components/schemas/ChatRoom"
+                  message:
+                    type: ""
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /chat/room:
+    post:
+      tags:
+        - Chat
+      security:
+        - ApiKeyAuth: []
+      summary: create new chatroom between users by username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: ts
+      responses:
+        201:
+          description: Chatroom is created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 201
+                  data:
+                    type: object
+                  message:
+                    type: string
+                    example: Friendship is created
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
 tags:
   - name: User
   - name: Auth
