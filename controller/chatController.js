@@ -121,4 +121,4 @@ const chatController = {
     }
   },
 };
-module.exports.chatController = chatController;
+module.exports.chatController = { ...chatController, ...chatUtil };
