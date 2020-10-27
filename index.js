@@ -1,5 +1,11 @@
 const express = require("express");
 const app = express();
+const server = require("http").Server(app);
+
+const io = require("socket.io")(server);
+require("./socket/chatSocket")(io);
+// require("./socket/chatroomsSocket")(io);
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -29,14 +35,6 @@ app.use("/friend", authMiddleware, friendship);
 app.use("/chat", authMiddleware, chat);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const { socketController, socketMiddleware } = require("./socket");
-
-io.on("connection", (socket) => {
-  socketController(io, socket);
-});
 
 server.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);

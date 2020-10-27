@@ -18,10 +18,14 @@ const ChatRoom = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    latestMessage: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   },
   {
     tableName: "ChatRoom",
-    createdAt: false,
+    createdAt: true,
     updatedAt: false,
   }
 );
