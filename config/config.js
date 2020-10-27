@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 module.exports = {
+  MODE: process.env.MODE || "production",
   dbName: process.env.DB_NAME || "",
   dbHost: process.env.DB_HOST || "",
   dbPort: process.env.DB_PORT || 0,
