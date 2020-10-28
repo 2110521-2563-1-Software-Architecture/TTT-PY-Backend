@@ -5,6 +5,7 @@ const ChatMessage = require("../model/chatmessage");
 const { responseError, responseSuccess } = require("../utils/response");
 const { friendshipController } = require("./friendshipController");
 const { userController } = require("./userController");
+const logger = require("../utils/logger");
 
 const chatUtil = {
   isInRoom: async (username, chatRoomID) => {
@@ -42,28 +43,6 @@ const chatController = {
       return responseError(res, 500, "Internal Error");
     }
   },
-  getAllChatRoomsSocket: async (username) => {
-    try {
-      const chatrooms = await ChatRoom.findAll({
-        where: {
-          [Op.or]: [{ username1: username }, { username2: username }],
-        },
-      });
-      chatrooms.sort((a, b) => {
-        let c = !a.latestMessage ? a.createdAt : a.latestMessage;
-        let d = !b.latestMessage ? b.createdAt : b.latestMessage;
-        return d - c;
-      });
-      let chatroomsOut = chatrooms.map(
-        ({ chatRoomID, username1, username2 }) => {
-          return { chatRoomID, username1, username2 };
-        }
-      );
-      return chatroomsOut;
-    } catch (err) {
-      throw err;
-    }
-  },
   getChatRoomByID: async (req, res) => {
     let chatRoomID = req.params.id;
     let username = req.user.username;
@@ -82,6 +61,22 @@ const chatController = {
       return responseSuccess(res, 200, chatroom);
     } catch (err) {
       return responseError(res, 500, "Internal Error");
+    }
+  },
+  getChatRoomByIDSocket: async (chatRoomID) => {
+    try {
+      const chatroom = await ChatRoom.findOne({
+        where: {
+          chatRoomID: chatRoomID,
+        },
+      });
+      if (!chatroom) {
+        return "Invalid chatroom";
+      }
+      return chatroom;
+    } catch (err) {
+      console.log(err);
+      return "Internal Error";
     }
   },
   createChatRoom: async (req, res) => {

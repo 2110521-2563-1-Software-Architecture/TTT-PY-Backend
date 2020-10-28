@@ -6,6 +6,8 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const REFRESH_CHATROOM = "refreshChatroom";
 const ERROR_EVENT = "errorEvent";
 
+const { log } = require("winston");
+const { stringify } = require("yamljs");
 const { jwtDecode } = require("../authUtil");
 
 const { chatController } = require("../controller/chatController");
@@ -56,8 +58,8 @@ const chatroomSocketMiddleware = async (socket) => {
 };
 
 const chatSocket = async (io) => {
-  const chatSpace = io.of("/chat");
-  const chatroomsSpace = io.of("/chatrooms");
+  let chatSpace = io.of("/chat");
+  let chatroomsSpace = io.of("/chatrooms");
 
   chatSpace.use((socket, next) => {
     chatSocketMiddleware(socket);
@@ -72,7 +74,6 @@ const chatSocket = async (io) => {
   chatSpace.on("connection", (socket) => {
     const roomId = socket.request.roomId;
     const username = socket.request.username;
-    const usernameReceiver = socket.request.friend;
 
     socket.on(GET_THE_PAST_MESSAGES, async () => {
       if (roomId === "undefined") {
@@ -99,10 +100,12 @@ const chatSocket = async (io) => {
         text,
         dateTime
       );
-
+      const chatroom = await chatController.getChatRoomByIDSocket(roomId);
       chatSpace.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, message);
-      const userChatrooms = "chatroomsOf" + username;
-      chatroomsSpace.to(userChatrooms).emit(REFRESH_CHATROOM, "refresh");
+      const user1Chatrooms = "chatroomsOf" + chatroom.username1;
+      const user2Chatrooms = "chatroomsOf" + chatroom.username2;
+      chatroomsSpace.in(user1Chatrooms).emit(REFRESH_CHATROOM, "refresh");
+      chatroomsSpace.in(user2Chatrooms).emit(REFRESH_CHATROOM, "refresh");
     });
 
     socket.on("disconnect", () => {
@@ -113,11 +116,6 @@ const chatSocket = async (io) => {
 
   chatroomsSpace.on("connection", (socket) => {
     const userChatrooms = socket.request.userChatrooms;
-
-    socket.on(REFRESH_CHATROOM, async ({ refresh }) => {
-      logger.info(refresh);
-      io.in(userChatrooms).emit(REFRESH_CHATROOM, chatroom);
-    });
 
     socket.on("disconnect", () => {
       socket.leave(userChatrooms);
