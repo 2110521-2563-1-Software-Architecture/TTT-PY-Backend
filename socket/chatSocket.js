@@ -86,13 +86,14 @@ const chatSocket = async (io) => {
       chatSpace.in(roomId).emit(GET_THE_PAST_MESSAGES, messages);
     });
 
-    socket.on(NEW_CHAT_MESSAGE_EVENT, async ({ text }) => {
+    socket.on(NEW_CHAT_MESSAGE_EVENT, async ({ text, uuid }) => {
       const usernameSender = username;
       const dateTime = Date.now();
       const message = {
         usernameSender: usernameSender,
         messageText: text,
         dateTime: dateTime,
+        uuid: uuid,
       };
       await chatController.createChatMessage(
         usernameSender,
