@@ -79,10 +79,13 @@ const chatSocket = async (io) => {
       if (roomId === "undefined") {
         return;
       }
-      const messages = await chatController.getChatMessagesByRoomID(
+      let messages = await chatController.getChatMessagesByRoomID(
         username,
         roomId
       );
+      messages.forEach((message) => {
+        message.setDataValue("dateTime", message.dateTime.getTime().toString());
+      });
       chatSpace.in(roomId).emit(GET_THE_PAST_MESSAGES, messages);
     });
 
@@ -92,7 +95,7 @@ const chatSocket = async (io) => {
       const message = {
         usernameSender: usernameSender,
         messageText: text,
-        dateTime: dateTime,
+        dateTime: dateTime.toString(),
         uuid: uuid,
       };
       await chatController.createChatMessage(
