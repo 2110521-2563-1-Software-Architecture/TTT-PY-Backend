@@ -11,4 +11,7 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "30d",
   jwtCookieExpires: process.env.JWT_COOKIE_EXPIRES || 30,
+  recaptchaSkipEnabled: process.env.RECAPTCHA_SKIP_ENABLED || false,
+  recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY || "",
+  recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY || "",
 };
