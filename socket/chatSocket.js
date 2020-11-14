@@ -6,8 +6,6 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const REFRESH_CHATROOM = "refreshChatroom";
 const ERROR_EVENT = "errorEvent";
 
-const { log } = require("winston");
-const { stringify } = require("yamljs");
 const { jwtDecode } = require("../authUtil");
 
 const { chatController } = require("../controller/chatController");
@@ -120,28 +118,6 @@ const chatSocket = async (io) => {
 
   chatroomsSpace.on("connection", (socket) => {
     const userChatrooms = socket.request.userChatrooms;
-
-    socket.on("disconnect", () => {
-      socket.leave(userChatrooms);
-    });
-  });
-};
-
-const chatroomSocket = async (io) => {
-  const chatroomsSpace = io.of("/chatrooms");
-
-  chatroomsSpace.use((socket, next) => {
-    chatroomSocketMiddleware(socket);
-    next();
-  });
-
-  chatroomsSpace.on("connection", (socket) => {
-    const userChatrooms = socket.request.userChatrooms;
-
-    socket.on(REFRESH_CHATROOM, async ({ refresh }) => {
-      logger.info(refresh);
-      io.in(userChatrooms).emit(REFRESH_CHATROOM, chatroom);
-    });
 
     socket.on("disconnect", () => {
       socket.leave(userChatrooms);
