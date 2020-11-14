@@ -49,6 +49,21 @@ const userController = {
       return responseError(res, 500, "Internal Error");
     }
   },
+  editMyProfile: async (req, res) => {
+    let username = req.user.username;
+    let { email, firstName, lastName, img } = req.body;
+    try {
+      await User.update(
+        { email, firstName, lastName, img },
+        {
+          where: { username: username },
+        }
+      );
+      return responseSuccess(res, 200, {}, "Profile is updated");
+    } catch (err) {
+      return responseError(res, 500, "Internal Error");
+    }
+  },
 };
 
 module.exports.userController = { ...userController, ...userUtil };
