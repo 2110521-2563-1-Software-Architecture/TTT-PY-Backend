@@ -118,6 +118,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
+    patch:
+      tags:
+        - User
+      summary: For user to change his/her profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: The user's first name
+                lastName:
+                  type: string
+                  description: The user's last name
+                email:
+                  type: string
+                  description: The user's email
+                img:
+                  type: integer
+                  description: The user's image number
+      responses:
+        200:
+          description: Edit profile successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
   /user/search:
     get:
       tags:
@@ -201,7 +246,7 @@ paths:
                     example: success
                   statusCode:
                     type: integer
-                    example: 200
+                    example: 201
                   data:
                     type: object
                     properties:

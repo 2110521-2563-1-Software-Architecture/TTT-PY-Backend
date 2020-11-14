@@ -9,4 +9,5 @@ router.use(function timeLog(req, res, next) {
 // define the home page route
 router.get("/", userController.getMyProfile);
 router.get("/search", userController.searchUserbyUsername);
+router.patch("/", userController.editMyProfile);
 module.exports = router;

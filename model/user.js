@@ -22,6 +22,9 @@ const User = sequelize.define(
     lastName: {
       type: DataTypes.STRING,
     },
+    img: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     tableName: "User",
