@@ -22,6 +22,14 @@ const ChatRoom = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    deletedTimeMessage1: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    deletedTimeMessage2: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   },
   {
     tableName: "ChatRoom",
