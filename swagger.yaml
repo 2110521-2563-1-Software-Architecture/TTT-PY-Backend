@@ -520,6 +520,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
+    delete:
+      tags:
+        - Chat
+      security:
+        - ApiKeyAuth: []
+      summary: delete chatroom by room id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: chatRoomID of specified chatroom
+          schema:
+            type: integer
+      responses:
+        201:
+          description: Delete successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 201
+                  data:
+                    type: null
+                    example: null
+                  message:
+                    type: string
+                    example: Delete chatroom successful
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
   /chat/room:
     post:
       tags:
@@ -574,6 +619,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
+
 tags:
   - name: User
   - name: Auth
