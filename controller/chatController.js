@@ -1,9 +1,11 @@
 const { Op } = require("sequelize");
+const sequelize = require("../config/db");
 const ChatRoom = require("../model/chatroom");
 const ChatMessage = require("../model/chatmessage");
 const { responseError, responseSuccess } = require("../utils/response");
 const { friendshipController } = require("./friendshipController");
 const { userController } = require("./userController");
+const logger = require("../utils/logger");
 
 const chatUtil = {
   isInRoom: async (username, chatRoomID) => {
@@ -26,7 +28,17 @@ const chatController = {
           [Op.or]: [{ username1: username }, { username2: username }],
         },
       });
-      return responseSuccess(res, 200, chatrooms);
+      chatrooms.sort((a, b) => {
+        let c = !a.latestMessage ? a.createdAt : a.latestMessage;
+        let d = !b.latestMessage ? b.createdAt : b.latestMessage;
+        return d - c;
+      });
+      let chatroomsOut = chatrooms.map(
+        ({ chatRoomID, username1, username2 }) => {
+          return { chatRoomID, username1, username2 };
+        }
+      );
+      return responseSuccess(res, 200, chatroomsOut);
     } catch (err) {
       return responseError(res, 500, "Internal Error");
     }
@@ -49,6 +61,22 @@ const chatController = {
       return responseSuccess(res, 200, chatroom);
     } catch (err) {
       return responseError(res, 500, "Internal Error");
+    }
+  },
+  getChatRoomByIDSocket: async (chatRoomID) => {
+    try {
+      const chatroom = await ChatRoom.findOne({
+        where: {
+          chatRoomID: chatRoomID,
+        },
+      });
+      if (!chatroom) {
+        return "Invalid chatroom";
+      }
+      return chatroom;
+    } catch (err) {
+      console.log(err);
+      return "Internal Error";
     }
   },
   createChatRoom: async (req, res) => {
@@ -109,16 +137,26 @@ const chatController = {
       if (!(await chatUtil.isInRoom(usernameSender, chatRoomID))) {
         throw new Error("You do not have permission to access this chatroom");
       }
-      const chatMessage = await ChatMessage.create({
-        usernameSender: usernameSender,
-        chatRoomID: chatRoomID,
-        messageText: messageText,
-        dateTime: dateTime,
+
+      await sequelize.transaction(async (t) => {
+        const chatMessage = await ChatMessage.create(
+          {
+            usernameSender: usernameSender,
+            chatRoomID: chatRoomID,
+            messageText: messageText,
+            dateTime: dateTime,
+          },
+          { transaction: t }
+        );
+        await ChatRoom.update(
+          { latestMessage: dateTime },
+          { where: { chatRoomID: chatRoomID }, transaction: t }
+        );
+        return chatMessage;
       });
-      return chatMessage;
     } catch (error) {
       throw error;
     }
   },
 };
-module.exports.chatController = chatController;
+module.exports.chatController = { ...chatController, ...chatUtil };
