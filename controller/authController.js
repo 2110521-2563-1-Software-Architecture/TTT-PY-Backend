@@ -3,10 +3,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { responseSuccess, responseError } = require("../utils/response");
 const config = require("../config/config");
+const { verifyRecaptcha } = require("../utils/recaptcha");
 
 const authController = {
   register: async (req, res, next) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, recaptchaResponse } = req.body;
+    const { remoteAddress } = req.connection;
     if (!username || !email || !password) {
       return responseError(
         res,
@@ -14,23 +16,29 @@ const authController = {
         "Please provide username, email and password"
       );
     }
-
-    try {
-      const usernameIsInUse = async () => {
-        return await User.findByPk(username);
-      };
-      if (!usernameIsInUse)
-        return responseError(res, 400, "This username is already in use");
-      let hashedPassword = await bcrypt.hash(password, 8);
-      const user = await User.create({
-        username,
-        email,
-        password: hashedPassword,
+    verifyRecaptcha(remoteAddress, recaptchaResponse)
+      .then(async () => {
+        // Process the request
+        try {
+          const usernameIsInUse = async () => {
+            return await User.findByPk(username);
+          };
+          if (!usernameIsInUse)
+            return responseError(res, 400, "This username is already in use");
+          let hashedPassword = await bcrypt.hash(password, 8);
+          const user = await User.create({
+            username,
+            email,
+            password: hashedPassword,
+          });
+          return responseSuccess(res, 201, user);
+        } catch (err) {
+          return responseError(res, 500, "Internal Error");
+        }
+      })
+      .catch(() => {
+        return responseError(res, 400, "RECAPTCHA invalid");
       });
-      return responseSuccess(res, 201, user);
-    } catch (err) {
-      return responseError(res, 500, "Internal Error");
-    }
   },
   login: async (req, res, next) => {
     const { username, password } = req.body;
