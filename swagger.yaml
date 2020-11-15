@@ -424,6 +424,114 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/definitions/InternalError"
+  /friend/block:
+    post:
+      tags:
+        - Friend
+      security:
+        - ApiKeyAuth: []
+      summary: block friendship by username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: ts
+      responses:
+        201:
+          description: Block friend successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 201
+                  data:
+                    type: object
+                  message:
+                    type: string
+                    example: Block friend successful
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
+  /friend/unblock:
+    post:
+      tags:
+        - Friend
+      security:
+        - ApiKeyAuth: []
+      summary: Unblock friendship by username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: ts
+      responses:
+        201:
+          description: Unblock friend successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: integer
+                    example: 201
+                  data:
+                    type: object
+                  message:
+                    type: string
+                    example: Unblock friend successful
+        400:
+          description: Bad Request
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/definitions/BadRequest"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/Unauthorized"
+        500:
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/definitions/InternalError"
   /chat/rooms:
     get:
       tags:
