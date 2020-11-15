@@ -77,6 +77,82 @@ const friendshipController = {
       return responseError(res, 500, "Internal Error");
     }
   },
+  blockFrinedByUsername: async (req, res) => {
+    try {
+      let username = req.user.username;
+      let friend = req.body.username;
+      if (!friend) {
+        return responseError(res, 400, "No input username");
+      }
+      if (username === friend) {
+        return responseError(res, 400, "You can't block yourself");
+      }
+
+      if (!(await userController.userValid(friend))) {
+        return responseError(res, 400, "Invalid friend username");
+      }
+      const friendShip = await friendUtil.checkFriend(username, friend);
+      if (!friendShip) {
+        return responseError(res, 400, "You're not friend to each other");
+      }
+
+      let updateObject;
+      if (username === friendShip.User_Username) {
+        updateObject = { isBlocked2: true };
+      } else {
+        updateObject = { isBlocked1: true };
+      }
+
+      await Friendship.update(updateObject, {
+        where: {
+          User_Username: friendShip.User_Username,
+          Friend_Username: friendShip.Friend_Username,
+        },
+      });
+      return responseSuccess(res, 201, {}, "Block friend successful");
+    } catch (err) {
+      console.log(err);
+      return responseError(res, 500, "Internal Error");
+    }
+  },
+  unblockFriendByUsername: async (req, res) => {
+    try {
+      let username = req.user.username;
+      let friend = req.body.username;
+      if (!friend) {
+        return responseError(res, 400, "No input username");
+      }
+      if (username === friend) {
+        return responseError(res, 400, "You can't unblock yourself");
+      }
+
+      if (!(await userController.userValid(friend))) {
+        return responseError(res, 400, "Invalid friend username");
+      }
+      const friendShip = await friendUtil.checkFriend(username, friend);
+      if (!friendShip) {
+        return responseError(res, 400, "You're not friend to each other");
+      }
+
+      let updateObject;
+      if (username === friendShip.User_Username) {
+        updateObject = { isBlocked2: false };
+      } else {
+        updateObject = { isBlocked1: false };
+      }
+
+      await Friendship.update(updateObject, {
+        where: {
+          User_Username: friendShip.User_Username,
+          Friend_Username: friendShip.Friend_Username,
+        },
+      });
+      return responseSuccess(res, 201, {}, "Unblock friend successful");
+    } catch (err) {
+      console.log(err);
+      return responseError(res, 500, "Internal Error");
+    }
+  },
 };
 
 module.exports.friendshipController = {

@@ -31,6 +31,7 @@ const chatController = {
         where: {
           [Op.or]: [{ username1: username }, { username2: username }],
         },
+        raw: true,
       });
 
       let haveAnyNewerMessage = async (chatRoomID, deletedTimeMessage) => {
@@ -70,6 +71,17 @@ const chatController = {
             continue;
           }
         }
+
+        const friendShip = await friendshipController.checkFriend(
+          chatroom.username1,
+          chatroom.username2
+        );
+
+        if (friendShip.User_Username === username && friendShip.isBlocked2)
+          continue;
+        if (friendShip.Friend_Username === username && friendShip.isBlocked1)
+          continue;
+
         filteredChatrooms.push(chatroom);
       }
 
@@ -199,6 +211,10 @@ const chatController = {
 
         const messages = await ChatMessage.findAll({
           where: {
+            [Op.or]: [
+              { isVisibleToFriend: true },
+              { usernameSender: username },
+            ],
             chatRoomID: chatRoomID,
             dateTime: {
               [Op.gt]: deletedTimeMessage ? deletedTimeMessage : 0,
@@ -216,11 +232,26 @@ const chatController = {
     usernameSender,
     chatRoomID,
     messageText,
-    dateTime
+    dateTime,
+    usernameReceiver
   ) => {
     try {
-      if (!(await chatUtil.isInRoom(usernameSender, chatRoomID))) {
-        throw new Error("You do not have permission to access this chatroom");
+      const friendShip = await friendshipController.checkFriend(
+        usernameSender,
+        usernameReceiver
+      );
+
+      let isVisibleToFriend = true;
+      if (
+        usernameSender === friendShip.User_Username &&
+        friendShip.isBlocked1
+      ) {
+        isVisibleToFriend = false;
+      } else if (
+        usernameSender === friendShip.Friend_Username &&
+        friendShip.isBlocked2
+      ) {
+        isVisibleToFriend = false;
       }
 
       await sequelize.transaction(async (t) => {
@@ -230,8 +261,11 @@ const chatController = {
             chatRoomID: chatRoomID,
             messageText: messageText,
             dateTime: dateTime,
+            isVisibleToFriend: isVisibleToFriend,
           },
-          { transaction: t }
+          {
+            transaction: t,
+          }
         );
         await ChatRoom.update(
           { latestMessage: dateTime },
@@ -239,6 +273,8 @@ const chatController = {
         );
         return chatMessage;
       });
+
+      return isVisibleToFriend;
     } catch (error) {
       throw error;
     }

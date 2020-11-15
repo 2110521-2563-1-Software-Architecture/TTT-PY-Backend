@@ -27,6 +27,11 @@ const ChatMessage = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    isVisibleToFriend: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: 1,
+    },
   },
   {
     tableName: "ChatMessage",
