@@ -26,8 +26,17 @@ const friendshipController = {
     try {
       var friends1 = await Friendship.findAll({
         attributes: {
-          exclude: ["password", "User_Username", "Friend_Username"],
-          include: [["Friend_Username", "username"]],
+          exclude: [
+            "password",
+            "User_Username",
+            "Friend_Username",
+            "isBlocked1",
+            "isBlocked2",
+          ],
+          include: [
+            ["Friend_Username", "username"],
+            ["isBlocked2", "isBlocked"],
+          ],
         },
         where: {
           User_Username: username,
@@ -36,14 +45,24 @@ const friendshipController = {
       try {
         var friends2 = await Friendship.findAll({
           attributes: {
-            exclude: ["password", "User_Username", "Friend_Username"],
-            include: [["User_Username", "username"]],
+            exclude: [
+              "password",
+              "User_Username",
+              "Friend_Username",
+              "isBlocked1",
+              "isBlocked2",
+            ],
+            include: [
+              ["User_Username", "username"],
+              ["isBlocked1", "isBlocked"],
+            ],
           },
           where: {
             Friend_Username: username,
           },
         });
         var friends = friends1.concat(friends2);
+        // console.log(friends);
         return responseSuccess(res, 200, friends);
       } catch (err) {
         console.log(err);

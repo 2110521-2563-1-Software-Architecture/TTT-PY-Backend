@@ -349,7 +349,16 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/User"
+                      properties:
+                        StartDate:
+                          type: datetime
+                          example: "2020-01-01 00:00:00"
+                        username:
+                          type: string
+                          example: t1
+                        isBlocked:
+                          type: boolean
+                          example: 0
                   message:
                     type: string
         400:
