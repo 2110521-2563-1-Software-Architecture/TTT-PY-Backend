@@ -7,13 +7,13 @@ const { verifyRecaptcha } = require("../utils/recaptcha");
 
 const authController = {
   register: async (req, res, next) => {
-    const { username, email, password, recaptchaResponse } = req.body;
+    const { username, firstName, lastName, email, password, recaptchaResponse } = req.body;
     const { remoteAddress } = req.connection;
-    if (!username || !email || !password) {
+    if (!username || !firstName || !lastName || !email || !password) {
       return responseError(
         res,
         400,
-        "Please provide username, email and password"
+        "Please provide the informations"
       );
     }
     verifyRecaptcha(remoteAddress, recaptchaResponse)
@@ -28,6 +28,8 @@ const authController = {
           let hashedPassword = await bcrypt.hash(password, 8);
           const user = await User.create({
             username,
+            firstName,
+            lastName,
             email,
             password: hashedPassword,
           });
