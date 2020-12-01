@@ -33,8 +33,13 @@ const chatSocketMiddleware = async (socket) => {
     return socket.emit(ERROR_EVENT, message);
   }
 
-  socket.join(roomId);
-  logger.info(`${socket.request.username} connected to room:${roomId}`.green);
+  const userChat = "chatOf" + socket.request.username;
+  socket.request.userChat = userChat;
+
+  socket.join(userChat);
+  logger.info(
+    `${socket.request.username} connected to ${userChat}, room ${roomId}`.green
+  );
 };
 
 const chatroomSocketMiddleware = async (socket) => {
@@ -52,7 +57,7 @@ const chatroomSocketMiddleware = async (socket) => {
   socket.request.userChatrooms = userChatrooms;
 
   socket.join(userChatrooms);
-  logger.info(userChatrooms.green);
+  logger.info(`${socket.request.username} connected to ${userChatrooms}`.green);
 };
 
 const chatSocket = async (io) => {
@@ -84,26 +89,43 @@ const chatSocket = async (io) => {
       messages.forEach((message) => {
         message.setDataValue("dateTime", message.dateTime.getTime().toString());
       });
-      chatSpace.in(roomId).emit(GET_THE_PAST_MESSAGES, messages);
+
+      const userChat = "chatOf" + username;
+      // console.log(userChat);
+      chatSpace.in(userChat).emit(GET_THE_PAST_MESSAGES, messages);
     });
 
     socket.on(NEW_CHAT_MESSAGE_EVENT, async ({ text, uuid }) => {
-      const usernameSender = username;
       const dateTime = Date.now();
+      const chatroom = await chatController.getChatRoomByIDSocket(roomId);
+      const usernameSender = username;
+      const usernameReceiver =
+        chatroom.username1 === usernameSender
+          ? chatroom.username2
+          : chatroom.username1;
+      const userChat = "chatOf" + usernameSender;
+      const friendChat = "chatOf" + usernameReceiver;
+
       const message = {
         usernameSender: usernameSender,
         messageText: text,
         dateTime: dateTime.toString(),
         uuid: uuid,
       };
-      await chatController.createChatMessage(
+
+      const isVisibleToFriend = await chatController.createChatMessage(
         usernameSender,
         roomId,
         text,
-        dateTime
+        dateTime,
+        usernameReceiver
       );
-      const chatroom = await chatController.getChatRoomByIDSocket(roomId);
-      chatSpace.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, message);
+      // console.log(isVisibleToFriend);
+
+      chatSpace.in(userChat).emit(NEW_CHAT_MESSAGE_EVENT, message);
+      if (isVisibleToFriend)
+        chatSpace.in(friendChat).emit(NEW_CHAT_MESSAGE_EVENT, message);
+
       const user1Chatrooms = "chatroomsOf" + chatroom.username1;
       const user2Chatrooms = "chatroomsOf" + chatroom.username2;
       chatroomsSpace.in(user1Chatrooms).emit(REFRESH_CHATROOM, "refresh");
@@ -111,7 +133,7 @@ const chatSocket = async (io) => {
     });
 
     socket.on("disconnect", () => {
-      logger.info(`${username} disconnected from room:${roomId}`.red);
+      logger.info(`${username} disconnected from room ${roomId}`.red);
       socket.leave(roomId);
     });
   });
