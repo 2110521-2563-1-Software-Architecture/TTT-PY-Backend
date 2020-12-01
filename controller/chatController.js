@@ -147,7 +147,7 @@ const chatController = {
       if (!(await friendshipController.checkFriend(username, friend))) {
         return responseError(res, 400, "You're not friends");
       }
-      const chatroomIsCreated = async () => {
+      const findChatroom = async () => {
         return await ChatRoom.findOne({
           where: {
             [Op.or]: [
@@ -157,14 +157,32 @@ const chatController = {
           },
         });
       };
-      if (await chatroomIsCreated()) {
+      const foundChatroom = await findChatroom();
+      const hasDeleteThisRoom = () => {
+        if (
+          username === foundChatroom.username1 &&
+          foundChatroom.deletedTimeMessage1
+        ) {
+          return true;
+        } else if (
+          username === foundChatroom.username2 &&
+          foundChatroom.deletedTimeMessage2
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      if (foundChatroom && !hasDeleteThisRoom) {
         return responseError(res, 400, "Chatroom has been already created");
+      } else {
+        const chatroom = await ChatRoom.create({
+          username1: username,
+          username2: friend,
+        });
+        return responseSuccess(res, 201, chatroom, "Chatroom is created");
       }
-      const chatroom = await ChatRoom.create({
-        username1: username,
-        username2: friend,
-      });
-      return responseSuccess(res, 201, chatroom, "Chatroom is created");
     } catch (err) {
       return responseError(res, 500, "Internal Error");
     }
