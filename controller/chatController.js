@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const sequelize = require("../config/db");
 const ChatRoom = require("../model/chatroom");
 const ChatMessage = require("../model/chatmessage");
+const User = require("../model/user");
 const { responseError, responseSuccess } = require("../utils/response");
 const { friendshipController } = require("./friendshipController");
 const { userController } = require("./userController");
@@ -31,7 +32,24 @@ const chatController = {
         where: {
           [Op.or]: [{ username1: username }, { username2: username }],
         },
+        include: [
+          {
+            model: User,
+            as: "chatroom_username1",
+            attributes: {
+              exclude: ["password"],
+            },
+          },
+          {
+            model: User,
+            as: "chatroom_username2",
+            attributes: {
+              exclude: ["password"],
+            },
+          },
+        ],
         raw: true,
+        nest: true,
       });
 
       let filteredChatrooms = [];
@@ -54,9 +72,16 @@ const chatController = {
         let d = !b.latestMessage ? b.createdAt : b.latestMessage;
         return d - c;
       });
+
       let chatroomsOut = filteredChatrooms.map(
-        ({ chatRoomID, username1, username2 }) => {
-          return { chatRoomID, username1, username2 };
+        ({ chatRoomID, chatroom_username1, chatroom_username2 }) => {
+          return {
+            chatRoomID,
+            Friend:
+              chatroom_username1.username === username
+                ? chatroom_username2
+                : chatroom_username1,
+          };
         }
       );
       return responseSuccess(res, 200, chatroomsOut);
