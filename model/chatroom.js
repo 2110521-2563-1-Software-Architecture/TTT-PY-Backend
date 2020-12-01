@@ -39,11 +39,11 @@ const ChatRoom = sequelize.define(
 );
 
 ChatRoom.belongsTo(User, {
-  targetKey: "username",
+  as: "chatroom_username1",
   foreignKey: "username1",
 });
 ChatRoom.belongsTo(User, {
-  targetKey: "username",
+  as: "chatroom_username2",
   foreignKey: "username2",
 });
 

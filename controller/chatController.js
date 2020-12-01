@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const sequelize = require("../config/db");
 const ChatRoom = require("../model/chatroom");
 const ChatMessage = require("../model/chatmessage");
+const User = require("../model/user");
 const { responseError, responseSuccess } = require("../utils/response");
 const { friendshipController } = require("./friendshipController");
 const { userController } = require("./userController");
@@ -31,47 +32,28 @@ const chatController = {
         where: {
           [Op.or]: [{ username1: username }, { username2: username }],
         },
-        raw: true,
-      });
-
-      let haveAnyNewerMessage = async (chatRoomID, deletedTimeMessage) => {
-        let aMessage = await ChatMessage.findOne({
-          where: {
-            chatRoomID: chatRoomID,
-            dateTime: {
-              [Op.gt]: deletedTimeMessage,
+        include: [
+          {
+            model: User,
+            as: "chatroom_username1",
+            attributes: {
+              exclude: ["password"],
             },
           },
-        });
-        if (aMessage) return true;
-        else return false;
-      };
+          {
+            model: User,
+            as: "chatroom_username2",
+            attributes: {
+              exclude: ["password"],
+            },
+          },
+        ],
+        raw: true,
+        nest: true,
+      });
 
       let filteredChatrooms = [];
       for (chatroom of chatrooms) {
-        if (chatroom.username1 === username && chatroom.deletedTimeMessage1) {
-          if (
-            !(await haveAnyNewerMessage(
-              chatroom.chatRoomID,
-              chatroom.deletedTimeMessage1
-            ))
-          ) {
-            continue;
-          }
-        } else if (
-          chatroom.username2 === username &&
-          chatroom.deletedTimeMessage2
-        ) {
-          if (
-            !(await haveAnyNewerMessage(
-              chatroom.chatRoomID,
-              chatroom.deletedTimeMessage2
-            ))
-          ) {
-            continue;
-          }
-        }
-
         const friendShip = await friendshipController.checkFriend(
           chatroom.username1,
           chatroom.username2
@@ -90,9 +72,16 @@ const chatController = {
         let d = !b.latestMessage ? b.createdAt : b.latestMessage;
         return d - c;
       });
+
       let chatroomsOut = filteredChatrooms.map(
-        ({ chatRoomID, username1, username2 }) => {
-          return { chatRoomID, username1, username2 };
+        ({ chatRoomID, chatroom_username1, chatroom_username2 }) => {
+          return {
+            chatRoomID,
+            Friend:
+              chatroom_username1.username === username
+                ? chatroom_username2
+                : chatroom_username1,
+          };
         }
       );
       return responseSuccess(res, 200, chatroomsOut);
@@ -147,7 +136,7 @@ const chatController = {
       if (!(await friendshipController.checkFriend(username, friend))) {
         return responseError(res, 400, "You're not friends");
       }
-      const chatroomIsCreated = async () => {
+      const findChatroom = async () => {
         return await ChatRoom.findOne({
           where: {
             [Op.or]: [
@@ -157,14 +146,35 @@ const chatController = {
           },
         });
       };
-      if (await chatroomIsCreated()) {
-        return responseError(res, 400, "Chatroom has been already created");
+      const foundChatroom = await findChatroom();
+      const hasDeleteThisRoom = () => {
+        if (
+          username === foundChatroom.username1 &&
+          foundChatroom.deletedTimeMessage1
+        ) {
+          return true;
+        } else if (
+          username === foundChatroom.username2 &&
+          foundChatroom.deletedTimeMessage2
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      if (foundChatroom) {
+        if (hasDeleteThisRoom)
+          return responseSuccess(res, 200, chatroom, "Resume chatroom");
+        else
+          return responseError(res, 400, "Chatroom has been already created");
+      } else {
+        const chatroom = await ChatRoom.create({
+          username1: username,
+          username2: friend,
+        });
+        return responseSuccess(res, 201, chatroom, "Chatroom is created");
       }
-      const chatroom = await ChatRoom.create({
-        username1: username,
-        username2: friend,
-      });
-      return responseSuccess(res, 201, chatroom, "Chatroom is created");
     } catch (err) {
       return responseError(res, 500, "Internal Error");
     }

@@ -41,6 +41,15 @@ const friendshipController = {
         where: {
           User_Username: username,
         },
+        include: {
+          model: User,
+          as: "friend_username",
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+        raw: true,
+        nest: true,
       });
       try {
         var friends2 = await Friendship.findAll({
@@ -60,8 +69,27 @@ const friendshipController = {
           where: {
             Friend_Username: username,
           },
+          include: {
+            model: User,
+            as: "user_username",
+            attributes: {
+              exclude: ["password"],
+            },
+          },
+          raw: true,
+          nest: true,
         });
+        // friends1 = friends1.toJSON();
+        // friends2 = friends2.toJSON();
         var friends = friends1.concat(friends2);
+        friends = friends.map((friend) => {
+          console.log(friend);
+          return {
+            username: friend.username,
+            isBlocked: friend.isBlocked,
+            User: friend.user_username || friend.friend_username,
+          };
+        });
         // console.log(friends);
         return responseSuccess(res, 200, friends);
       } catch (err) {
