@@ -41,6 +41,13 @@ const friendshipController = {
         where: {
           User_Username: username,
         },
+        include: {
+          model: User,
+          as: "friend_username",
+          attributes: {
+            exclude: ["password"],
+          },
+        },
       });
       try {
         var friends2 = await Friendship.findAll({
@@ -59,6 +66,13 @@ const friendshipController = {
           },
           where: {
             Friend_Username: username,
+          },
+          include: {
+            model: User,
+            as: "user_username",
+            attributes: {
+              exclude: ["password"],
+            },
           },
         });
         var friends = friends1.concat(friends2);
