@@ -34,44 +34,8 @@ const chatController = {
         raw: true,
       });
 
-      let haveAnyNewerMessage = async (chatRoomID, deletedTimeMessage) => {
-        let aMessage = await ChatMessage.findOne({
-          where: {
-            chatRoomID: chatRoomID,
-            dateTime: {
-              [Op.gt]: deletedTimeMessage,
-            },
-          },
-        });
-        if (aMessage) return true;
-        else return false;
-      };
-
       let filteredChatrooms = [];
       for (chatroom of chatrooms) {
-        if (chatroom.username1 === username && chatroom.deletedTimeMessage1) {
-          if (
-            !(await haveAnyNewerMessage(
-              chatroom.chatRoomID,
-              chatroom.deletedTimeMessage1
-            ))
-          ) {
-            continue;
-          }
-        } else if (
-          chatroom.username2 === username &&
-          chatroom.deletedTimeMessage2
-        ) {
-          if (
-            !(await haveAnyNewerMessage(
-              chatroom.chatRoomID,
-              chatroom.deletedTimeMessage2
-            ))
-          ) {
-            continue;
-          }
-        }
-
         const friendShip = await friendshipController.checkFriend(
           chatroom.username1,
           chatroom.username2
@@ -174,8 +138,11 @@ const chatController = {
         }
       };
 
-      if (foundChatroom && !hasDeleteThisRoom) {
-        return responseError(res, 400, "Chatroom has been already created");
+      if (foundChatroom) {
+        if (hasDeleteThisRoom)
+          return responseSuccess(res, 200, chatroom, "Resume chatroom");
+        else
+          return responseError(res, 400, "Chatroom has been already created");
       } else {
         const chatroom = await ChatRoom.create({
           username1: username,

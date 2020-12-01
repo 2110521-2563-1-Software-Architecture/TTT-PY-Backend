@@ -36,11 +36,11 @@ const Friendship = sequelize.define(
 );
 
 Friendship.belongsTo(User, {
-  targetKey: "username",
+  as: "user_username",
   foreignKey: "User_Username",
 });
 Friendship.belongsTo(User, {
-  targetKey: "username",
+  as: "friend_username",
   foreignKey: "Friend_Username",
 });
 

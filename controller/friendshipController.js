@@ -43,8 +43,9 @@ const friendshipController = {
         },
         include: {
           model: User,
+          as: "friend_username",
           attributes: {
-            exclude: ["password", "username"],
+            exclude: ["password"],
           },
         },
       });
@@ -68,8 +69,9 @@ const friendshipController = {
           },
           include: {
             model: User,
+            as: "user_username",
             attributes: {
-              exclude: ["password", "username"],
+              exclude: ["password"],
             },
           },
         });
