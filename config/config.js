@@ -14,4 +14,6 @@ module.exports = {
   recaptchaSkipEnabled: process.env.RECAPTCHA_SKIP_ENABLED || false,
   recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY || "",
   recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY || "",
+  redisAdapterEndpoint: process.env.REDIS_ADAPTER_ENDPOINT || null,
+  redisAdapterPort: process.env.REDIS_ADAPTER_PORT || 6379,
 };

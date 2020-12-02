@@ -60,7 +60,7 @@ const chatroomSocketMiddleware = async (socket) => {
   logger.info(`${socket.request.username} connected to ${userChatrooms}`.green);
 };
 
-const chatSocket = async (io) => {
+const chatSocket = (io) => {
   let chatSpace = io.of("/chat");
   let chatroomsSpace = io.of("/chatrooms");
 
@@ -86,13 +86,16 @@ const chatSocket = async (io) => {
         username,
         roomId
       );
+
       messages.forEach((message) => {
-        message.setDataValue("dateTime", message.dateTime.getTime().toString());
+        // console.log(message);
+        message.dateTime = message.dateTime.getTime().toString();
       });
 
       const userChat = "chatOf" + username;
-      // console.log(userChat);
-      chatSpace.in(userChat).emit(GET_THE_PAST_MESSAGES, messages);
+      console.log(userChat);
+      // console.log(messages);
+      chatSpace.to(userChat).emit(GET_THE_PAST_MESSAGES, messages);
     });
 
     socket.on(NEW_CHAT_MESSAGE_EVENT, async ({ text, uuid }) => {
@@ -122,14 +125,14 @@ const chatSocket = async (io) => {
       );
       // console.log(isVisibleToFriend);
 
-      chatSpace.in(userChat).emit(NEW_CHAT_MESSAGE_EVENT, message);
+      chatSpace.to(userChat).emit(NEW_CHAT_MESSAGE_EVENT, message);
       if (isVisibleToFriend)
-        chatSpace.in(friendChat).emit(NEW_CHAT_MESSAGE_EVENT, message);
+        chatSpace.to(friendChat).emit(NEW_CHAT_MESSAGE_EVENT, message);
 
       const user1Chatrooms = "chatroomsOf" + chatroom.username1;
       const user2Chatrooms = "chatroomsOf" + chatroom.username2;
-      chatroomsSpace.in(user1Chatrooms).emit(REFRESH_CHATROOM, "refresh");
-      chatroomsSpace.in(user2Chatrooms).emit(REFRESH_CHATROOM, "refresh");
+      chatroomsSpace.to(user1Chatrooms).emit(REFRESH_CHATROOM, "refresh");
+      chatroomsSpace.to(user2Chatrooms).emit(REFRESH_CHATROOM, "refresh");
     });
 
     socket.on("disconnect", () => {

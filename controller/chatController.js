@@ -231,11 +231,12 @@ const chatController = {
             },
           },
           attributes: { exclude: ["messageID", "chatRoomID"] },
+          raw: true,
         });
         return messages;
       }
     } catch (error) {
-      responseError(res, 401, error.message);
+      throw error;
     }
   },
   createChatMessage: async (

@@ -1,15 +1,25 @@
+const config = require("./config/config");
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
 
 const io = require("socket.io")(server);
+
+var redis = require("socket.io-redis");
+if (config.redisAdapterEndpoint) {
+  io.adapter(
+    redis({
+      host: config.redisAdapterEndpoint,
+      port: config.redisAdapterPort,
+    })
+  );
+}
 require("./socket/chatSocket")(io);
 
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
-const config = require("./config/config");
 const port = config.appPort;
 
 const swaggerUi = require("swagger-ui-express");
