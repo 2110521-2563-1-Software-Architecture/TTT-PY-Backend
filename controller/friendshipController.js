@@ -83,7 +83,7 @@ const friendshipController = {
         // friends2 = friends2.toJSON();
         var friends = friends1.concat(friends2);
         friends = friends.map((friend) => {
-          console.log(friend);
+          // console.log(friend);
           return {
             username: friend.username,
             isBlocked: friend.isBlocked,

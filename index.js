@@ -2,12 +2,13 @@ const config = require("./config/config");
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const redisAdapter = require("socket.io-redis");
 
 const io = require("socket.io")(server);
+
+var redis = require("socket.io-redis");
 if (config.redisAdapterEndpoint) {
   io.adapter(
-    redisAdapter({
+    redis({
       host: config.redisAdapterEndpoint,
       port: config.redisAdapterPort,
     })
